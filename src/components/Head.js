@@ -1,12 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { toggleMenu } from './utils/appSlice'
 import { useDispatch } from 'react-redux'
+import { YT_AUTOSUGGEST_API } from './utils/constants'
+
 const Head = () => {
     const dispatch = useDispatch();
+    const [searchQuery, setsearchQuery] = useState("")
+    
     const toggleMenuHandler = () => {
         //intereseting thing: you don't have to pass anyting to togglemenue because
-        //if u go to the slice you can see that it doesn't have any payload it only has state
+        //if u go to the sli ce you can see that it doesn't have any payload it only has state
         dispatch(toggleMenu())
+    }
+    //its easy when you want to make an api call on every letter typed you just have to pass searchQery in the dependency array
+    //but now we want to learn debouncing
+    //we'll make an api call after every key press only if the difference between 
+    //2 apis call is <200ms, otherwise we decline the api call
+    //we will do it by timeout function
+    useEffect(() => {
+        //start the timer and make and api call after 200 ms
+        const timer = setTimeout(() => getSearchSuggestions(), 200)
+        return () => { clearTimeout(timer) };
+
+    }, [searchQuery])
+    const getSearchSuggestions = async () => {
+        console.log(searchQuery);
+        const data = await fetch(YT_AUTOSUGGEST_API + searchQuery)
+        const json = await data.json();
+        console.log(json);
     }
     return (
         <>
@@ -25,7 +46,12 @@ const Head = () => {
                     </div>
                 </div>
                 <div className='flex col-span-10 border w-96  rounded-full  mx-auto text-center bg-gray-100'>
-                    <input type='text' className='mx-2 w-80' placeholder='Search' />
+                    <input type='text'
+                        className='mx-2 w-80'
+                        placeholder='Search'
+                        value={searchQuery}
+                        onChange={(e) => setsearchQuery(e.target.value)} />
+
                     <img className="bg-gray-100" width="25" height="25" src="https://img.icons8.com/ios/50/search--v1.png" alt="search--v1" />
                 </div>
                 <div className='col-span-1'>
