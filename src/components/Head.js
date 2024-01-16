@@ -6,7 +6,7 @@ import { YT_AUTOSUGGEST_API } from './utils/constants'
 const Head = () => {
     const dispatch = useDispatch();
     const [searchQuery, setsearchQuery] = useState("")
-    
+    const [belowSearch, setBelowSearch] = useState("")
     const toggleMenuHandler = () => {
         //intereseting thing: you don't have to pass anyting to togglemenue because
         //if u go to the sli ce you can see that it doesn't have any payload it only has state
@@ -27,7 +27,9 @@ const Head = () => {
         console.log(searchQuery);
         const data = await fetch(YT_AUTOSUGGEST_API + searchQuery)
         const json = await data.json();
-        console.log(json);
+        setBelowSearch(json[1])
+        console.log(belowSearch)
+
     }
     return (
         <>
@@ -45,15 +47,32 @@ const Head = () => {
                         <h1 className='font-bold text-lg'>Youtube</h1>
                     </div>
                 </div>
-                <div className='flex col-span-10 border w-96  rounded-full  mx-auto text-center bg-gray-100'>
-                    <input type='text'
-                        className='mx-2 w-80'
-                        placeholder='Search'
-                        value={searchQuery}
-                        onChange={(e) => setsearchQuery(e.target.value)} />
+                <div className='flex flex-col col-span-10 border w-96  rounded-full  mx-auto text-center bg-gray-100'>
 
-                    <img className="bg-gray-100" width="25" height="25" src="https://img.icons8.com/ios/50/search--v1.png" alt="search--v1" />
+                    <div className='flex'>
+                        <input type='text'
+                            className='mx-2 w-80'
+                            placeholder='Search'
+                            value={searchQuery}
+                            onChange={(e) => setsearchQuery(e.target.value)} />
+
+                        <img className="bg-gray-100" width="30" height="25" src="https://img.icons8.com/ios/50/search--v1.png" alt="search--v1" />
+                    </div>
+
+                    <div>
+                        <ul>
+                            {belowSearch.map((items) => {
+                                return <li>{items}</li>
+                            })}
+
+
+
+                        </ul>
+                    </div>
+
+
                 </div>
+
                 <div className='col-span-1'>
                     <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png" alt="user-male-circle" />
                 </div>
